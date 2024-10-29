@@ -114,6 +114,11 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
         LE
         GE
         NE
+        COUNT // 以下是聚合函数
+        SUM
+        AVG
+        MAX
+        MIN
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -139,6 +144,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
   char *                                     string;
   int                                        number;
   float                                      floats;
+  char *                                     aggr_expr;
 }
 
 %token <number> NUMBER
@@ -158,7 +164,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
 %type <attr_infos>          attr_def_list
 %type <attr_info>           attr_def
 %type <value_list>          value_list
-
+%type <aggr_expr>           aggr_expr
 %type <condition_list>      where
 %type <condition_list>      condition_list
 %type <string>              storage_format
@@ -616,7 +622,33 @@ expression:
       $$ = new StarExpr();
     }
     // your code here
+    | aggr_expr LBRACE expression RBRACE {
+     $$ = create_aggregate_expression($1, $3, sql_string, &@$);
+     delete[] $1;
+    }
     ;
+aggr_expr:
+        COUNT {
+          $$ = new char[6];
+          strcpy($$, "COUNT");
+        }
+        | SUM {
+        $$ = new char[4];
+        strcpy($$, "SUM");
+        }
+        | AVG{
+        $$ = new char[4];
+        strcpy($$, "AVG");
+        }
+        | MAX{
+        $$ = new char[4];
+        strcpy($$, "MAX");
+        }
+        | MIN{
+        $$ = new char[4];
+        strcpy($$, "MIN");
+        }
+        ;
 rel_attr:
     ID {
       $$ = new RelAttrSqlNode;

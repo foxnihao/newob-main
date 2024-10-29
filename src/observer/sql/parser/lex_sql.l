@@ -82,6 +82,11 @@ QUOTE            [\'\"]
 
 ";"                                     RETURN_TOKEN(SEMICOLON);
 {DOT}                                   RETURN_TOKEN(DOT);
+COUNT                                   RETURN_TOKEN(COUNT); // 以下是聚合函数
+SUM                                     RETURN_TOKEN(SUM);
+AVG                                     RETURN_TOKEN(AVG);
+MAX                                     RETURN_TOKEN(MAX);
+MIN                                     RETURN_TOKEN(MIN);
 EXIT                                    RETURN_TOKEN(EXIT);
 HELP                                    RETURN_TOKEN(HELP);
 DESC                                    RETURN_TOKEN(DESC);
